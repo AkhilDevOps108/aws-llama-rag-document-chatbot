@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Document Knowledge Base</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background: #1f2937;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+.container {
+    width: 80%;
+    margin: auto;
+    margin-top: 40px;
+}
+
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+}
+
+.upload-area {
+    border: 2px dashed #ccc;
+    padding: 40px;
+    text-align: center;
+    border-radius: 10px;
+}
+
+button {
+    padding: 10px 20px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1e40af;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background: #f1f5f9;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>Document Knowledge Base</h1>
+<p>Upload PDFs to build your knowledge system</p>
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<h2>Upload PDF</h2>
+
+<div class="upload-area">
+<input type="file" id="pdfFile" accept="application/pdf">
+<br><br>
+<button onclick="uploadPDF()">Upload</button>
+</div>
+
+<p id="status"></p>
+
+</div>
+
+<div class="card">
+
+<h2>Uploaded Documents</h2>
+
+<table>
+<thead>
+<tr>
+<th>File Name</th>
+<th>Size</th>
+<th>Upload Time</th>
+</tr>
+</thead>
+
+<tbody id="fileTable">
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<script>
+
+async function uploadPDF(){
+
+    const fileInput = document.getElementById("pdfFile")
+    const file = fileInput.files[0]
+
+    if(!file){
+        alert("Please select a PDF file")
+        return
+    }
+
+    const formData = new FormData()
+    formData.append("file", file)
+
+    document.getElementById("status").innerText = "Uploading..."
+
+    try{
+
+        const response = await fetch("http://localhost:8000/upload",{
+            method:"POST",
+            body:formData
+        })
+
+        const data = await response.json()
+
+        document.getElementById("status").innerText = "Upload successful!"
+
+        loadFiles()
+
+    }catch(err){
+
+        document.getElementById("status").innerText = "Upload failed"
+
+    }
+
+}
+
+async function loadFiles(){
+
+    try{
+
+        const response = await fetch("http://localhost:8000/files")
+
+        const files = await response.json()
+
+        const table = document.getElementById("fileTable")
+
+        table.innerHTML = ""
+
+        files.forEach(file => {
+
+            const row = `
+            <tr>
+            <td>${file.name}</td>
+            <td>${file.size}</td>
+            <td>${file.uploaded_at}</td>
+            </tr>
+            `
+
+            table.innerHTML += row
+
+        })
+
+    }catch(err){
+        console.log(err)
+    }
+
+}
+
+loadFiles()
+
+</script>
+
+</body>
+</html>
