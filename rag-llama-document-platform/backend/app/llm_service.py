@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 
-OLLAMA_URL = os.getenv("OLLAMA_URL", "http://EC2_PUBLIC_IP:11434/api/generate")
+OLLAMA_URL = os.getenv("OLLAMA_URL", "http://34.204.89.228:11434/api/generate")
 
 
 def ask_llm(question: str, context: list[str]) -> str:
@@ -30,7 +30,7 @@ Answer based only on the context.
             "prompt": prompt,
             "stream": False,
         },
-        timeout=120,
+        timeout=300,
     )
     response.raise_for_status()
 

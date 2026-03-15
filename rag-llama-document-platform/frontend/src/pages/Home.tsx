@@ -2,6 +2,7 @@ import React from 'react';
 import Navbar from '../components/Navbar';
 import UploadForm from '../components/UploadForm';
 import FileList from '../components/FileList';
+import ChatInterface from '../components/ChatInterface';
 
 const Home: React.FC = () => {
   return (
@@ -10,6 +11,7 @@ const Home: React.FC = () => {
       <main>
         <UploadForm />
         <FileList />
+        <ChatInterface />
       </main>
     </div>
   );
